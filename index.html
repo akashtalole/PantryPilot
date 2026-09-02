@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PantryPilot — meal planning for humans and agents</title>
+  <meta name="description" content="A meal-planning and shopping-list app that humans and AI agents can drive together, live, via WebMCP." />
+  <!-- WebMCP tools default to same-origin (`self`) already; declared explicitly for clarity. -->
+  <meta http-equiv="Permissions-Policy" content="tools=(self)" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧭</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-icon" aria-hidden="true">🧭</span>
+      <div>
+        <h1>PantryPilot</h1>
+        <p class="tagline">Plan meals and shop smarter — with a human, an agent, or both at once.</p>
+      </div>
+    </div>
+    <div id="webmcp-status" class="webmcp-status" role="status">Checking WebMCP support…</div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab-btn active" data-tab="plan" role="tab" aria-selected="true">Meal Plan</button>
+    <button class="tab-btn" data-tab="recipes" role="tab" aria-selected="false">Recipes</button>
+    <button class="tab-btn" data-tab="pantry" role="tab" aria-selected="false">Pantry</button>
+    <button class="tab-btn" data-tab="shopping" role="tab" aria-selected="false">Shopping List</button>
+    <button class="tab-btn" data-tab="agent" role="tab" aria-selected="false">Activity &amp; Agent Console</button>
+  </nav>
+
+  <main>
+    <section id="tab-plan" class="tab-panel" aria-labelledby="plan">
+      <div class="panel-header">
+        <h2>This week's plan</h2>
+        <div class="week-cost" id="week-cost">Estimated cost: $0.00</div>
+      </div>
+      <div class="dietary-bar" id="dietary-bar" aria-label="Dietary preferences"></div>
+      <div class="plan-toolbar">
+        <form id="budget-form" class="inline-form">
+          <label for="budget-input">Weekly budget</label>
+          <input id="budget-input" type="number" min="0" step="1" placeholder="e.g. 60" />
+          <button type="submit">Set</button>
+        </form>
+        <button id="autofill-week" class="ghost-btn" type="button">Auto-fill empty days</button>
+      </div>
+      <div class="budget-status" id="budget-status"></div>
+      <div class="nutrition-summary" id="nutrition-summary"></div>
+      <div class="plan-grid" id="plan-grid"></div>
+    </section>
+
+    <section id="tab-recipes" class="tab-panel hidden" aria-labelledby="recipes">
+      <div class="panel-header">
+        <h2>Recipe catalog</h2>
+        <input id="recipe-search" type="search" placeholder="Search recipes or ingredients…" aria-label="Search recipes" />
+      </div>
+      <div class="tag-filters" id="tag-filters"></div>
+      <div class="recipe-toolbar">
+        <label for="sort-select">Sort by</label>
+        <select id="sort-select">
+          <option value="relevance">Relevance</option>
+          <option value="pantryMatch">What I already have</option>
+          <option value="expiringSoon">Uses expiring items</option>
+          <option value="cost">Lowest cost</option>
+          <option value="prepTime">Fastest</option>
+          <option value="calories">Lowest calories</option>
+        </select>
+      </div>
+      <div class="recipe-grid" id="recipe-grid"></div>
+    </section>
+
+    <section id="tab-pantry" class="tab-panel hidden" aria-labelledby="pantry">
+      <div class="panel-header">
+        <h2>Pantry staples</h2>
+        <form id="add-pantry-form" class="inline-form">
+          <input id="add-pantry-input" type="text" placeholder="Add an item, e.g. quinoa" aria-label="New pantry item" />
+          <input id="add-pantry-expiry" type="date" aria-label="Expiry date (optional)" />
+          <button type="submit">Add</button>
+        </form>
+      </div>
+      <p class="hint">Give an item an expiry date and PantryPilot (and any connected agent) can prioritize using it up before it goes to waste.</p>
+      <ul class="pantry-list" id="pantry-list"></ul>
+    </section>
+
+    <section id="tab-shopping" class="tab-panel hidden" aria-labelledby="shopping">
+      <div class="panel-header">
+        <h2>Shopping list</h2>
+        <button id="regen-shopping" class="ghost-btn">Regenerate</button>
+      </div>
+      <p class="hint">Auto-generated from your meal plan, minus anything already in the pantry.</p>
+      <ul class="shopping-list" id="shopping-list"></ul>
+    </section>
+
+    <section id="tab-agent" class="tab-panel hidden" aria-labelledby="agent">
+      <div class="agent-columns">
+        <div>
+          <h2>Activity log</h2>
+          <p class="hint">Every action, whether taken by you or an agent, appears here.</p>
+          <button id="undo-btn" class="ghost-btn" type="button" disabled>Undo</button>
+          <ul class="activity-log" id="activity-log"></ul>
+        </div>
+        <div>
+          <h2>Agent console</h2>
+          <p class="hint">
+            These are the exact WebMCP tools registered on this page via
+            <code>document.modelContext.registerTool()</code>. If your browser doesn't yet support native WebMCP,
+            use this console to call the same tools directly and see the UI update live — useful for testing and
+            for demoing the tool surface without the Chrome origin trial or ChatGPT's browser.
+          </p>
+          <form id="tool-form" class="tool-form">
+            <label for="tool-select">Tool</label>
+            <select id="tool-select"></select>
+            <label for="tool-args">Arguments (JSON)</label>
+            <textarea id="tool-args" rows="5" spellcheck="false">{}</textarea>
+            <button type="submit">Run tool</button>
+          </form>
+          <pre id="tool-result" class="tool-result" aria-live="polite"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    Built for <a href="https://webmcp.devpost.com/" target="_blank" rel="noopener">The WebMCP Challenge</a> ·
+    <a href="https://github.com/webmachinelearning/webmcp" target="_blank" rel="noopener">WebMCP spec</a> ·
+    <a href="README.md">Project README</a>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

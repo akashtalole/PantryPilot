@@ -1,0 +1,9 @@
+{
+  "name": "pantrypilot",
+  "private": true,
+  "type": "module",
+  "description": "A meal-planning app for The WebMCP Challenge, driven collaboratively by humans and WebMCP-connected agents.",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  }
+}
