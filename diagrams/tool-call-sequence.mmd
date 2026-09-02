@@ -1,0 +1,34 @@
+%% PantryPilot -- a concrete WebMCP tool call, end to end.
+%% Example: an agent calls plan-week; note the two cascading store.update()
+%% calls (the plan mutation, then the internal shopping-list regen) --
+%% this is exactly why undo snapshots right before the mutation inside
+%% each action, not at the tool boundary: one user-facing action must stay
+%% one undo step despite the cascade.
+sequenceDiagram
+    actor Agent as AI Agent
+    participant WebMCP as document.modelContext
+    participant Tools as webmcp-tools.js
+    participant Actions as actions.js
+    participant Store as state-store.js
+    participant UI as ui.js
+    actor Human as Human (watching)
+
+    Agent->>WebMCP: executeTool("plan-week", {...})
+    WebMCP->>Tools: execute(args)
+    Tools->>Actions: Actions.planWeek(args, "agent")
+    Actions->>Actions: snapshotForUndo(description, "agent")
+    Actions->>Store: store.update(draft => draft.plan = {...})
+    Store->>Store: persist to localStorage
+    Store-->>UI: dispatch "change" event
+    UI->>UI: renderAll() -- plan grid, nutrition, budget
+
+    Actions->>Actions: generateShoppingList("agent", {silent: true})
+    Actions->>Store: store.update(draft => draft.shoppingList = [...])
+    Store->>Store: persist to localStorage
+    Store-->>UI: dispatch "change" event
+    UI->>UI: renderAll() -- shopping list updates too
+
+    Actions-->>Tools: {planned, skipped, plan, budget}
+    Tools-->>WebMCP: {content: [{type: "text", text: JSON}]}
+    WebMCP-->>Agent: tool result
+    UI-->>Human: sees the week fill in live, no refresh

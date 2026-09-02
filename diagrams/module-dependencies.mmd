@@ -1,0 +1,23 @@
+%% PantryPilot -- JS module dependency graph (matches actual import statements)
+flowchart LR
+    HTML["index.html"] --> Main["main.js<br/>bootstraps the app"]
+    Main --> UI["ui.js<br/>rendering + human events"]
+    Main --> Tools["webmcp-tools.js<br/>tool schemas + registration"]
+
+    UI --> Store["state-store.js<br/>reactive store"]
+    UI --> Actions["actions.js<br/>shared domain logic"]
+    UI --> Recipes["recipes-data.js<br/>seed catalog"]
+    UI --> Tools
+
+    Tools --> Actions
+    Tools --> Store
+
+    Actions --> Store
+    Actions --> Recipes
+
+    classDef entry fill:#e6f0e6,stroke:#2f6b3f,color:#1f2318
+    classDef core fill:#fff5e0,stroke:#b3541e,color:#1f2318
+    classDef leaf fill:#f3f2ee,stroke:#5b6156,color:#1f2318
+    class HTML,Main entry
+    class Actions core
+    class Store,Recipes leaf
