@@ -1,0 +1,56 @@
+site_name: PantryPilot
+site_description: A meal-planning and shopping-list app driven collaboratively by humans and WebMCP agents.
+site_url: https://akashtalole.github.io/PantryPilot/
+repo_url: https://github.com/akashtalole/PantryPilot
+repo_name: akashtalole/PantryPilot
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: amber
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: amber
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.top
+    - content.code.copy
+    - content.action.edit
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: index.md
+  - How to Use: usage.md
+  - WebMCP Tools: tools.md
+  - Architecture: ARCHITECTURE.md
+  - Development: development.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.details
+
+plugins:
+  - search

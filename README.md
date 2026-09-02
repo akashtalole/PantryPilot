@@ -2,6 +2,10 @@
 
 A meal-planning and shopping-list app built for **[The WebMCP Challenge](https://webmcp.devpost.com/)**.
 
+**[Live demo](https://zingy-hamster-1df2ed.netlify.app/)** ·
+**[Full documentation](https://akashtalole.github.io/PantryPilot/)** ·
+**[On Devpost](https://devpost.com/software/webmcp-btw3nd)**
+
 PantryPilot is an ordinary, useful web app — plan a week of dinners, respect
 dietary restrictions, track pantry staples, get an auto-generated shopping
 list — that becomes something new once an AI agent can drive it directly.
@@ -72,7 +76,12 @@ Full schemas are in [`js/webmcp-tools.js`](js/webmcp-tools.js).
 
 ## Using it
 
-**As a human:** open `index.html`, click through the Meal Plan / Recipes /
+See **[How to Use](https://akashtalole.github.io/PantryPilot/usage/)** in the
+docs for a full walkthrough with screenshots, including exact steps to
+enable WebMCP in Chrome so the page registers its tools natively.
+
+**As a human:** open the [live demo](https://zingy-hamster-1df2ed.netlify.app/)
+(or `index.html` locally) and click through the Meal Plan / Recipes /
 Pantry / Shopping List tabs like any normal app.
 
 **As an agent:** open the page in a WebMCP-capable client (Chrome with the

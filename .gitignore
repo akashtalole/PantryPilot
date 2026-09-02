@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# MkDocs build output
+site/
+
 # Env / secrets
 .env
 .env.*

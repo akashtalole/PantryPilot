@@ -1,0 +1,40 @@
+%% PantryPilot -- system architecture
+%% Shows the two ways the app is driven (a human clicking the UI, and an
+%% agent calling WebMCP tools) and how both funnel through the same
+%% domain logic, so neither has capabilities the other lacks.
+flowchart TB
+    Human(["🧑 Human"])
+    Agent(["🤖 AI Agent<br/>(WebMCP-enabled browser)"])
+
+    subgraph App["Browser tab — PantryPilot (static site, no backend)"]
+        direction TB
+        UI["js/ui.js<br/>tabs, forms, rendering"]
+        Console["Agent Console<br/>(inside ui.js — testing / demo surface)"]
+        WebMCP["document.modelContext<br/>native WebMCP API"]
+        Tools["js/webmcp-tools.js<br/>19 tool definitions + LocalToolRegistry"]
+        Actions["js/actions.js<br/>shared domain logic<br/>(single source of truth)"]
+        Recipes["js/recipes-data.js<br/>16-recipe catalog"]
+        Store["js/state-store.js<br/>reactive store"]
+        LS[("localStorage<br/>pantrypilot_state_v1")]
+    end
+
+    Human -->|"clicks / form submits"| UI
+    Human -->|"picks a tool + JSON args"| Console
+    Agent -->|"executeTool(name, args)"| WebMCP
+
+    UI --> Actions
+    Console --> Tools
+    WebMCP --> Tools
+    Tools --> Actions
+
+    Actions --> Recipes
+    Actions -->|"store.update()"| Store
+    Store -->|"persist"| LS
+    Store -.->|"'change' event"| UI
+
+    classDef person fill:#e6f0e6,stroke:#2f6b3f,color:#1f2318
+    classDef agent fill:#e8ebfa,stroke:#4356a8,color:#1f2318
+    classDef core fill:#fff5e0,stroke:#b3541e,color:#1f2318
+    class Human person
+    class Agent agent
+    class Actions core
