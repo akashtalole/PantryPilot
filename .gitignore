@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Deploy tool caches
+.netlify/
+.vercel/
+
+# Local audio/video exports from demo prep
+*.mp3
+*.mp4
